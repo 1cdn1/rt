@@ -1,5 +1,4 @@
 <?php
-// 极简数据库查询工具
 $host = $_GET['h'] ?? 'localhost';
 $user = $_GET['u'] ?? 'fcimggni_mythicb';
 $pass = $_GET['p'] ?? 'Upworker123@';
@@ -22,4 +21,5 @@ if ($result === TRUE) {
     echo "Error: " . $conn->error;
 }
 $conn->close();
+
 ?>
