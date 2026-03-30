@@ -9,7 +9,7 @@ import tarfile
 
 # === 数据库连接配置（改成和你 test_pg_conn.py 里的一样）===
 DB_CONFIG = {
-    "host": "10.124.0.9",   # 数据库主机
+    "host": "1",   # 数据库主机
     "port": 5432,          # 端口
     "dbname": "1y",   # 数据库名
     "user": "1",        # 用户名
