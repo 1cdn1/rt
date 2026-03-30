@@ -11,9 +11,9 @@ import tarfile
 DB_CONFIG = {
     "host": "10.124.0.9",   # 数据库主机
     "port": 5432,          # 端口
-    "dbname": "yandy",   # 数据库名
-    "user": "yandydbman",        # 用户名
-    "password": "9959694c18d12ekEZN9x!dkldajojo"  # 密码
+    "dbname": "1y",   # 数据库名
+    "user": "1",        # 用户名
+    "password": "1"  # 密码
 }
 
 # === 要导出的日期（update_stamp 的那一天）===
