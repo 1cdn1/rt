@@ -201,6 +201,7 @@ def monitor_restart():
         
         for line in process.stdout:
             if RESTART_PATTERN.search(line):
+                log("Debug", f"Matched: {line.strip()[:150]}")
                 handle_restart()
                 
     except Exception as e:
