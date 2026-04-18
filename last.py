@@ -17,7 +17,7 @@ COOLDOWN_SECONDS = 80
 CLEAN_INTERVAL = 0.05
 
 MODSEC_PATTERN = re.compile(r'.*ModSecurity.*\n?')
-RESTART_PATTERN = re.compile(r'Apache.*resuming|mpm_.*configured|Server built')
+RESTART_PATTERN = re.compile(r'\[mpm_\w+:notice\].*configured|Apache/.* \(Unix\).*resuming|Server built:')
 STARTUP_PATTERNS = [
     'Apache/2', 'mpm_', 'configured', 'resuming', 'SIG', 'Command line',
     'Server built', 'mod_security', 'APR', 'OpenSSL', 'ssl:warn',
