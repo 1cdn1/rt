@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|Bash",
+        "command": "/home/fcimggni/.local/bin/syntax-check.sh 2>/dev/null || true"
+      }
+    ]
+  }
+}
